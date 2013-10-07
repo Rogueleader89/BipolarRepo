@@ -39,9 +39,15 @@ var upKeyDown = false;
 var playerSpeed = 0;
 var maxPlayerSpeed = 6;
 var upSpeed = 0;
-var gravity = 2;
-var jumpStrength = 20;
+var gravity = 5;
+var velocity = 0;
+var tempVel = 0;
+var tempPos = 0;
+var standstill = false;
+var acceleration = gravity/27;
+var jumpStrength = 8.5;
 var friction = 1;
+var gameOver = false;
 
 //Platforms
 var platformGravity = 0;
@@ -75,6 +81,8 @@ function platform(x, y)
     }
     this.smash = function()
     {
+        if(gameOver == false)
+        {
         if(this.plx > 360)
         {
         this.setpos((360 * Math.random()), -offset);
@@ -86,6 +94,11 @@ function platform(x, y)
         }
         offset += 80;
         personCounter--;
+        }
+        else
+        {
+            this.setpos(-96, -32);
+        }
         if(person1.broken == 1)
         {
 
@@ -93,6 +106,7 @@ function platform(x, y)
             {
                 this.personCheck = false;
                 person1.broken = 0;
+                //alert("HIT");
             }
         }
         if(personCounter <= 0)
@@ -119,11 +133,15 @@ function platform(x, y)
 
             if(((posY+32) < (this.ply + 32)) && ((posY+32) > (this.ply)))
             {
-                if(upSpeed <= 0)
+                if(velocity >= 0)
                 {
+                    if(standstill == false)
+                    {
 
-                upSpeed+= jumpStrength * 1.1;
-                this.smash();
+                        upSpeed+= jumpStrength * 1.1;
+                        velocity = -upSpeed;
+                        this.smash();
+                    }
                 }
             }
         }
@@ -139,7 +157,7 @@ function person(x,y,num)
     this.broken = num;
     this.fall = function()
     {
-        this.broken = 0;
+        //this.broken = 0;
 
         if(this.persy <=480)
         {
@@ -187,9 +205,10 @@ Game.timerTick = function()
     {
         //Transition to depression phase.
 
+        gameOver = true;
         //When transition is done set the following variables below.
-        cTime = startTime;
-        endManic = true;
+        //cTime = startTime;
+
     }
 }
 
@@ -204,7 +223,7 @@ Game.draw = function()
 {
     if(endManic)
     {
-        ctx.clearRect(0,0,720,480);
+        setTimeout( ctx.clearRect(0,0,720,480), 1000);
     }
     else
     {
@@ -260,22 +279,58 @@ Game.update = function()
     }
     if(posY >= 480)
     {
-        upSpeed += jumpStrength * 1.25;
-        platformGravity = 4;
-        gravcheck = 30;
+        if(gameOver == false)
+        {
+            upSpeed += jumpStrength * 1.25;
+            velocity = -upSpeed;
+            //platformGravity = 4;
+            gravcheck = 30;
+        }
+        else
+        {
+            endManic = true;
+        }
     }
 
     if(posY <= 120)
     {
-        gravity = 6;
-        platformGravity = 4;
+        //gravity = 6;
+
+            if(standstill == false)
+            {
+                tempVel = velocity;
+                tempPos = posY;
+                standstill = true;
+            }
+            velocity = 0;
+            posY = 120;
+            tempVel = tempVel + acceleration;
+            tempPos = tempPos + tempVel - upSpeed;
+        upSpeed --;
+            if(tempVel > 0)
+            {
+                velocity = tempVel;
+                //posY = tempPos;
+                posY += velocity - upSpeed;
+                standstill = false;
+            }
+        if(standstill == true)
+        {
+
+                platformGravity = -tempVel * 2;
+
+
+        }
     }
     else
     {
-        gravity = 2
+        velocity = velocity + acceleration;
+        posY += velocity - upSpeed;                                             //!!!!
+        upSpeed--;
+        //gravity = 2
              if(gravcheck > 0)
              {
-            platformGravity =4;
+            platformGravity = - velocity;
              }
         else
              {
@@ -284,8 +339,7 @@ Game.update = function()
         gravcheck --;
 
     }
-    posY += gravity - upSpeed;
-    upSpeed--;
+
     if(upSpeed < 0)
     {
         upSpeed = 0;
@@ -345,7 +399,7 @@ Game.update = function()
     {
         //ends game loop so that depressive phase can take over.
         //Be sure to play transition before doing this.
-        clearInterval(Game._intervalId);
+        setTimeout( clearInterval(Game._intervalId), 1000);
     }
 
 }
@@ -360,6 +414,7 @@ function keyDownListener(e)
     {
         //this is solely for testing jumping since we lack platforms currently.
         upSpeed += jumpStrength;
+        velocity = -upSpeed;
         upKeyDown = true;
     }
     //d and right
