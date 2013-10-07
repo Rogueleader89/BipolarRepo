@@ -423,12 +423,72 @@ function keyDownListener(e)
         rightKeyDown = true;
         if(playerSpeed < 0)
         {
-            playerSpeed = maxPlayerSpeed
-           // playerSpeed ++;
+           // playerSpeed = maxPlayerSpeed
+          //  playerSpeed ++;
+			if(cTime > 40)
+			{
+            	playerSpeed = 0;
+			}
+			else if(cTime > 30)
+			{
+				playerSpeed += 2;
+			}
+			else if(cTime > 10)
+			{
+				playerSpeed++;
+			}
+			else
+			{
+				playerSpeed = maxPlayerSpeed;
+			}
         }
         else
         {
-            playerSpeed = maxPlayerSpeed;
+		//	if(cTime >= 50)
+		//	{
+		//		playerSpeed = 1;
+		//	}
+		//	else if(cTime >= 40)
+		//	{
+		//		playerSpeed = 2;
+		//	}
+			if(cTime >= 30)
+			{
+				if(playerSpeed >= 3)
+				{
+					playerSpeed++;
+				}
+				else
+				{
+					playerSpeed = 3;
+				}
+			}
+			else if(cTime >= 20)
+			{
+				if(playerSpeed >= 4)
+				{
+					playerSpeed++;
+				}
+				else
+				{
+					playerSpeed = 4;
+				}
+			}
+			else if(cTime >= 10)
+			{
+				if(playerSpeed >= 5)
+				{
+					playerSpeed++;
+				}
+				else
+				{
+					playerSpeed = 5;
+				}
+			}
+			else
+			{
+            	playerSpeed = maxPlayerSpeed;
+			}
         }
         if(playerSpeed > maxPlayerSpeed)
         {
@@ -441,12 +501,71 @@ function keyDownListener(e)
         leftKeyDown = true;
         if(playerSpeed > 0)
         {
-            playerSpeed = -maxPlayerSpeed;
-            //playerSpeed --;
+            //playerSpeed = -maxPlayerSpeed;
+			if(cTime > 40)
+			{
+            	playerSpeed = 0;
+			}
+			else if(cTime > 30)
+			{
+				playerSpeed -= 2;
+			}
+			else if(cTime > 10)
+			{
+				playerSpeed --;
+			}
+			else
+			{
+				playerSpeed = -maxPlayerSpeed;
+			}
         }
         else
         {
-            playerSpeed = -maxPlayerSpeed;
+		//	if(cTime >= 50)
+		//	{
+		//		playerSpeed = -1;
+		//	}
+		//	else if(cTime >= 40)
+		//	{
+		//		playerSpeed = -2;
+		//	}
+			if(cTime >= 30)
+			{
+				if(playerSpeed <= 3)
+				{
+					playerSpeed--;
+				}
+				else
+				{
+					playerSpeed = -3;
+				}
+			}
+			else if(cTime >= 20)
+			{
+				if(playerSpeed <= 4)
+				{
+					playerSpeed--;
+				}
+				else
+				{
+					playerSpeed = -4;
+				}
+			}
+			else if(cTime >= 10)
+			{
+				if(playerSpeed <= 5)
+				{
+					playerSpeed--;
+				}
+				else
+				{
+					playerSpeed = -5;
+				}
+			}
+			else
+			{
+            	playerSpeed = -maxPlayerSpeed;
+			}
         }
         if(playerSpeed < -maxPlayerSpeed)
         {
