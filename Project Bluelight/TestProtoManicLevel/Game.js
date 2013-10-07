@@ -379,10 +379,7 @@ Game.update = function()
         if(person1.broken == 1)
         {
             person1.persy += platformGravity;
-            if(person1.persy >= 480)
-            {
-                person1.broken = 2;
-            }
+
         }
 
         if( offset > 80)
