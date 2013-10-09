@@ -64,11 +64,13 @@ var gravcheck = 0;
 var personImg = new Image();
 personImg.src = "person.png";
 var personCounter = 6;
-function platform(x, y)
+function platform(x, y, num)
 {
     this.plx = x;
     this.ply = y;
     this.personCheck = false;
+    this.numba =   num;
+    this.nullify = false;
 
     this.setpos = function(a, b)
     {
@@ -81,7 +83,7 @@ function platform(x, y)
     }
     this.smash = function()
     {
-        if(gameOver == false)
+        if(this.nullify == false)
         {
         if(this.plx > 360)
         {
@@ -174,11 +176,11 @@ function person(x,y,num)
     }
 }
 //Create all the platforms
-var p1 = new platform(400, 270);
-var p2 = new platform(100, 100);
-var p3 = new platform(600, 410);
-var p4 = new platform(3, 350);
-var p5 = new platform(500, 50);
+var p1 = new platform(400, 270, 1);
+var p2 = new platform(100, 100, 2);
+var p3 = new platform(600, 410, 3);
+var p4 = new platform(3, 350, 4);
+var p5 = new platform(500, 50, 5);
 
 //Create the person
 var person1 = new person(-200, 500, 2);
@@ -325,7 +327,7 @@ Game.update = function()
     else
     {
         velocity = velocity + acceleration;
-        posY += velocity - upSpeed;                                             //!!!!
+        posY += velocity - upSpeed;
         upSpeed--;
         //gravity = 2
              if(gravcheck > 0)
@@ -339,6 +341,77 @@ Game.update = function()
         gravcheck --;
 
     }
+    //Remove platforms as time ticks on
+    if(cTime < 40)
+    {
+        if(p1.numba > 0)
+        {
+            /*if(p1.personCheck == true)
+            {
+                person1.broken = 0;
+            }*/
+
+            p1.numba = 0;
+        }
+        else
+        {
+            p1.nullify = true;
+            //p1.setpos(-96, -32);
+        }
+        if(cTime < 20)
+        {
+            if(p2.numba > 0)
+            {
+               /* if(p2.personCheck == true)
+                {
+                    person1.broken = 0;
+                } */
+
+                p2.numba = 0;
+            }
+            else
+            {
+                //p2.setpos(-96, -32);
+                p2.nullify = true;
+            }
+
+            if(cTime < 7)
+            {
+                if(p3.numba > 0)
+                {
+                    /*if(p3.personCheck == true)
+                    {
+                        person1.broken = 0;
+                    } */
+
+                    p3.numba = 0;
+                }
+                else
+                {
+                    //p3.setpos(-96, -32);
+                    p3.nullify = true;
+                }
+                if(cTime < 2)
+                {
+                    if(p4.numba > 0)
+                    {
+                        /*if(p4.personCheck == true)
+                        {
+                            person1.broken = 0;
+                        } */
+
+                        p4.numba = 0;
+                    }
+                    else
+                    {
+                        //p4.setpos(-96, -32);
+                        p4.nullify = true;
+                    }
+                }
+            }
+        }
+    }
+                      //Collision code for platforms, as well as code that removes them should they move offscreen
 
     if(upSpeed < 0)
     {
@@ -369,6 +442,7 @@ Game.update = function()
     {
         p5.smash();
     }
+    //Gravity adjusters for platforms, as well as offset adjusters
     if(platformGravity > 0)
     {
         p1.sety(p1.ply + platformGravity);
@@ -387,6 +461,7 @@ Game.update = function()
             offset -= platformGravity;
         }
     }
+
     if(person1.broken == 0)
     {
         person1.fall();
